@@ -21,6 +21,7 @@ float freq = 440.f;
 float samples_per_cycle = samplerate / freq;
 float phase_increment = (1.f / samples_per_cycle);
 
+
 /// the process callback
 int process(  int nframes_not_used,
               float** inputBuffers,
@@ -31,9 +32,12 @@ int process(  int nframes_not_used,
   
   while ( *ttyDevice )
   {
-    //std::string strInput;
-    //*ttyDevice >> strInput;
-    cout << (*ttyDevice).getline() << endl;
+    char byte;
+    *ttyDevice >> byte;
+    //char* s = (*ttyDevice).getline();
+    
+    printf("%d\n", byte );
+
   }
   
   for(int i = 0; i < nframes; i++)
