@@ -1,3 +1,3 @@
 
 all:
-	g++ src/*.cxx -lpthread -lasound
+	g++ -g src/*.cxx   -fsanitize=address -fno-omit-frame-pointer -lpthread -lasound -lsndfile
