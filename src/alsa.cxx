@@ -105,7 +105,7 @@ void EngineAlsa::thr_main(void)
   }
   int i, k;
   
-  Alsa_pcmi* pcmi = new Alsa_pcmi( playDev, captDev, /* controlDev */ 0, sr, nframes, nbufs, /* debug */ true);
+  Alsa_pcmi* pcmi = new Alsa_pcmi( playDev, 0, /* controlDev */ 0, sr, nframes, nbufs, /* debug */ true);
   
   if ( pcmi->state() )
   {
@@ -116,9 +116,10 @@ void EngineAlsa::thr_main(void)
     return;
   }
   
-  if ( (pcmi->ncapt() < 2) || (pcmi->nplay() < 2) )
+  //if ( (pcmi->ncapt() < 2) || (pcmi->nplay() < 2) )
+  if ( (pcmi->nplay() < 2) )
   {
-    OPENAV_P_ERROR("Is not a stereo device");
+    OPENAV_P_ERROR("Playback device not available");
     delete pcmi;
     pcmi = 0;
     _status = OPENAV_ERROR;
@@ -154,16 +155,21 @@ void EngineAlsa::thr_main(void)
     while (k >= nframes)
     {
       // copy input data to buffers
+      /*
       pcmi->capt_init (nframes);
       pcmi->capt_chan (0, inBuf + 0      , nframes, 1);
       pcmi->capt_chan (1, inBuf + nframes, nframes, 1);
       pcmi->capt_done (nframes);
-
+      */
+      
       // "do the stuff":
       float* ins[] = { inBuf, inBuf + nframes };
       float* out[] = { outBuf, outBuf + nframes };
       
       // zero output buffers
+      memset( ins[0], 0, nframes * sizeof(float) );
+      memset( ins[0], 0, nframes * sizeof(float) );
+      
       memset( out[0], 0, nframes * sizeof(float) );
       memset( out[1], 0, nframes * sizeof(float) );
       
