@@ -144,29 +144,34 @@ int process(  int nframes_not_used,
   
   if ( retval )
   {
-    char byte[24];
+    char byte[2];
     read( ttyFD, byte, 2 );
     
-    printf("HIT trigger %d\n", byte[0] );
-    if ( byte[0] >= 0 && byte[0] < 6 )
+    //if( byte[0] != 10 )
+    for(auto b : {0,1})
     {
       
-      for(int i = 0; i < NVOICES; i++)
+      
+      if ( byte[b] >= 0 && byte[b] < 6 )
       {
-        if( ! voices[i].playing )
+        printf("HIT trigger %d\n", byte[b] );
+        
+        for(int i = 0; i < NVOICES; i++)
         {
-          if ( byte[0] != 2 )
+          if( ! voices[i].playing )
           {
-            voices[i].play( byte[0] );
-            printf("voice %i trigger %d\n", i, byte[0] );
+            voices[i].play( byte[b] );
+            printf("voice %i trigger %d\n", i, byte[b] );
+          
+            break;
           }
-          break;
         }
       }
-    }
-    else
-    {
-      printf("trigger num %i : out of bounds!\n", byte[0] );
+      else
+      {
+        if( byte[b] != 10 )
+          printf("trigger num %i : out of bounds!\n", byte[b] );
+      }
     }
   }
   
