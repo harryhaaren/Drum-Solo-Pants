@@ -1,10 +1,18 @@
 
 #include <math.h>
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+
 #include "alsa.hxx"
 
 const int samplerate = 48000;
 const int nframes    = 512;
 const int nbufs      = 4;
+
+const char* ttyName  = "/dev/ttyACM0";
 
 float phase = 0.f;
 
@@ -19,9 +27,14 @@ int process(  int nframes_not_used,
               float** outputBuffers,
               void* userdata)
 {
-  //memset( outputBuffers[0], 0, sizeof(float)*nframes );
-  //memset( outputBuffers[1], 0, sizeof(float)*nframes );
+  ifstream* ttyDevice = (ifstream*)userdata;
   
+  while ( *ttyDevice )
+  {
+    //std::string strInput;
+    //*ttyDevice >> strInput;
+    cout << (*ttyDevice).getline() << endl;
+  }
   
   for(int i = 0; i < nframes; i++)
   {
@@ -37,7 +50,15 @@ int process(  int nframes_not_used,
 
 int main()
 {
-  EngineAlsa* engine = new EngineAlsa( process, 0, "hw:0", "hw:0", samplerate, nframes, nbufs, 80 );
+  ifstream ttyDevice( ttyName );
+  if (!ttyDevice)
+  {
+    // Print an error and exit
+    cerr << "Uh oh, " << ttyName << "could not be opened for reading!" << endl;
+    exit(1);
+  }
+  
+  EngineAlsa* engine = new EngineAlsa( process, (void*)&ttyDevice, "hw:0", "hw:0", samplerate, nframes, nbufs, 80 );
   
   engine -> start();
   
