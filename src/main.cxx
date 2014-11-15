@@ -148,20 +148,21 @@ int process(  int nframes_not_used,
     read( ttyFD, byte, 2 );
     
     //if( byte[0] != 10 )
-    for(auto b : {0,1})
+    for(int b = 0; b < 2; b++ )
     {
       
       
-      if ( byte[b] >= 0 && byte[b] < 6 )
+      if ( byte[b] >= 0 + 0x30 && byte[b] < 6 + 0x30 )
       {
-        printf("HIT trigger %d\n", byte[b] );
+        int trig = byte[b] - 0x30;
+        printf("HIT trigger %d\n", trig );
         
         for(int i = 0; i < NVOICES; i++)
         {
           if( ! voices[i].playing )
           {
-            voices[i].play( byte[b] );
-            printf("voice %i trigger %d\n", i, byte[b] );
+            voices[i].play( trig );
+            printf("voice %i trigger %d\n", i, trig );
           
             break;
           }
