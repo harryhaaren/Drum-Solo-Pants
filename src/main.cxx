@@ -2,8 +2,9 @@
 #include <math.h>
 #include "alsa.hxx"
 
-const int samplerate = 44100;
-const int nframes    = 128 ;
+const int samplerate = 48000;
+const int nframes    = 512;
+const int nbufs      = 4;
 
 float phase = 0.f;
 
@@ -36,7 +37,7 @@ int process(  int nframes_not_used,
 
 int main()
 {
-  EngineAlsa* engine = new EngineAlsa( process, 0, "hw:0", "hw:0", samplerate, nframes, 4, 80 );
+  EngineAlsa* engine = new EngineAlsa( process, 0, "hw:0", "hw:0", samplerate, nframes, nbufs, 80 );
   
   engine -> start();
   
