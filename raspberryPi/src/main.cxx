@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <sstream>
 
 #include <sndfile.h>
@@ -26,15 +27,24 @@ class Sample
     {
       std::stringstream s;
       s << "wav/"<< i + 1 << ".wav";
-      
+      loadSample( s.str() );
+    }
+    
+    Sample( std::string s )
+    {
+      loadSample( s );
+    }
+    
+    void loadSample( std::string s )
+    {
       sample = 0;
       
       SF_INFO info;
-      SNDFILE* const sndfile = sf_open( s.str().c_str(), SFM_READ, &info);
+      SNDFILE* const sndfile = sf_open( s.c_str(), SFM_READ, &info);
       
       if ( !sndfile )
       {
-        printf("Failed to open sample '%s'\n", s.str().c_str() );
+        printf("Failed to open sample '%s'\n", s.c_str() );
         free(sample);
         return;
       }
@@ -44,7 +54,7 @@ class Sample
       
       if ( info.channels > 1 )
       {
-        printf("Warning, sample %s has %i channels\n", s.str().c_str(), info.channels);
+        printf("Warning, sample %s has %i channels\n", s.c_str(), info.channels);
       }
       
       sample = (float*)malloc(sizeof(float) * frames * info.channels );
@@ -71,7 +81,7 @@ class Sample
     float* sample;
 };
 
-Sample* samples[6];
+Sample* samples[8];
 
 class Voice
 {
@@ -152,7 +162,7 @@ int process(  int nframes_not_used,
     {
       
       
-      if ( byte[b] >= 0 + 0x30 && byte[b] < 6 + 0x30 )
+      if ( byte[b] >= 0 + 0x30 && byte[b] < 8 + 0x30 )
       {
         int trig = byte[b] - 0x30;
         printf("HIT trigger %d\n", trig );
@@ -232,6 +242,9 @@ int main()
   {
     samples[i] = new Sample( i );
   }
+  
+  samples[6] = new Sample( "wav/footstep1.wav" );
+  samples[7] = new Sample( "wav/footstep2.wav" );
   
   for(int i = 0; i < NVOICES; i++)
   {
