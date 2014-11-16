@@ -256,6 +256,11 @@ int main()
     }
   }
   
+  // use this to trigger a sample straight after starting running:
+  //voices[0].play( 0 );
+  //voices[1].play( 1 );
+  //voices[2].play( 6 );
+  
   
   // Start the audio engine
   EngineAlsa* engine = new EngineAlsa( process, (void*)&fd, "hw:0", "hw:0", samplerate, nframes, nbufs, 80 );
